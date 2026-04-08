@@ -11,8 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('task_lists', function (Blueprint $table) {
-            $table->id();
+        Schema::create('TASK_LISTS', function (Blueprint $table) {
+            $table->id('nTaskListNo');
+            $table->string('cTaskListName');
+            $table->string('cTaskListsColor', 32)->nullable();
             $table->timestamps();
         });
     }
@@ -22,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('task_lists');
+        Schema::dropIfExists('TASK_LISTS');
     }
 };

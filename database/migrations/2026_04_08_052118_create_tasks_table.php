@@ -11,9 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tasks', function (Blueprint $table) {
-            $table->id();
+        Schema::create('TASKS', function (Blueprint $table) {
+            $table->id('nTaskNo');
+            $table->string('cTaskName');
+            $table->text('cTasksDescription')->nullable();
+            $table->string('cTaskPriority', 64)->default('Normal');
+            $table->boolean('cCompleted')->default(false);
             $table->timestamps();
+            $table->foreignId('nTaskListNo')->references('nTaskListNo')->on('TASK_LISTS')->onDelete('cascade');
         });
     }
 
@@ -22,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tasks');
+        Schema::dropIfExists('TASKS');
     }
 };
