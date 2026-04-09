@@ -3,11 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-namespace App\Http\Controllers;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use App\models\TaskLists;
-use App\models\Tasks;
+use App\Models\TaskLists;
+use App\Models\Tasks;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -30,22 +28,23 @@ class TaskController extends Controller
     // }
 
 
-    public function index(Request $request): Response {
-        $query = Tasks::query()->with('list: cTaskNo, cTaskName, cTaskDescription');
+    public function index(Request $request): Response
+    {
+        $query = Tasks::query()->with('list:nTaskListNo,cTaskListName,cTaskListsColor');
 
-        if($request->filled('search')) {
+        if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
                 $q->where('cTaskName', 'like', '%' . $request->search . '%')
-                  ->orWhere('cTaskDescription', 'like', '%' . $request->search . '%');
+                    ->orWhere('cTaskDescription', 'like', '%' . $request->search . '%');
             });
         }
 
-        if($request->filled('cTaskPriority')) {
+        if ($request->filled('cTaskPriority')) {
             $query->where('cTaskPriority', $request->cTaskPriority);
         }
 
-        if($request->filled('cTaskListNo')) {
-            $query->where('nTaskListNo', $request->cTaskListNo);
+        if ($request->filled('nTaskListNo')) {
+            $query->where('nTaskListNo', $request->nTaskListNo);
         }
 
         $tasks = $query->latest()->paginate(10)->withQueryString();
@@ -55,36 +54,36 @@ class TaskController extends Controller
         return Inertia::render('tasks/index', [
             'tasks' => $tasks,
             'lists' => $lists,
-            'filters' => $request->only(['search', 'cTaskPriority', 'cTaskListNo']),
+            'filters' => $request->only(['search', 'cTaskPriority', 'nTaskListNo']),
         ]);
     }
 
 
-    public function restore(Request $request): RedirectResponse {
+    public function store(Request $request): RedirectResponse
+    {
         $validated = $request->validate([
             'cTaskName' => ['required', 'string', 'max:255'],
             'cTaskDescription' => ['nullable', 'string'],
-            'cTaskPriority' => ['required', 'string', 'max:64'],  // Assuming priority is a string like 'High', 'Medium', 'Low'
-            'cCompleted' => ['required', 'boolean'],
-            'nTaskListNo' => ['required', 'exists:lists,nTaskListNo'],
+            'cTaskPriority' => ['required', 'string', 'max:64'],
+            'nTaskListNo' => ['required', 'exists:TASK_LISTS,nTaskListNo'],
+            // remove cCompleted from here entirely
         ]);
 
-        $validated['cCompleted'] = (bool) ($validated['cCompleted'] ?? false);
-        $validated['cTaskPriority'] = $validated['cTaskPriority'] ?? 'Normal';
-
-        Tasks::withTrashed()->create($validated);
+        $validated['cCompleted'] = false; // new tasks are always incomplete
+        Tasks::create($validated);
 
         return redirect()->back();
     }
 
 
-    public function update(Request $request, Tasks $task): RedirectResponse {
+    public function update(Request $request, Tasks $task): RedirectResponse
+    {
         $validated = $request->validate([
             'cTaskName' => ['required', 'string', 'max:255'],
             'cTaskDescription' => ['nullable', 'string'],
             'cTaskPriority' => ['required', 'string', 'max:64'],  // Assuming priority is a string like 'High', 'Medium', 'Low'
             'cCompleted' => ['required', 'boolean'],
-            'nTaskListNo' => ['required', 'exists:lists,nTaskListNo'],
+            'nTaskListNo' => ['required', 'exists:TASK_LISTS,nTaskListNo'],
         ]);
 
         $validated['cCompleted'] = (bool) ($validated['cCompleted'] ?? false);
@@ -96,7 +95,8 @@ class TaskController extends Controller
     }
 
 
-    public function destroy(Tasks $task): RedirectResponse {
+    public function destroy(Tasks $task): RedirectResponse
+    {
         $task->delete();
 
         return redirect()->back();

@@ -12,11 +12,11 @@ class Tasks extends Model
     //
     use HasFactory;
     protected $table = 'TASKS';
+    protected $primaryKey = 'nTaskNo'; 
 
     protected $fillable = [
-        'nTaskNo',
         'cTaskName',
-        'cTaskDescription',
+        'cTasksDescription',
         'cTaskPriority',
         'cCompleted',
         'nTaskListNo'
@@ -26,7 +26,7 @@ class Tasks extends Model
         'cCompleted' => 'boolean',
     ];
 
-    public function tasks(): BelongsTo
+    public function list(): BelongsTo
     {
         return $this->belongsTo(TaskLists::class, 'nTaskListNo');
     }
