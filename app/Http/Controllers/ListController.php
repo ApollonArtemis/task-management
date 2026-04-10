@@ -13,14 +13,24 @@ class ListController extends Controller
     public function index(): Response
     {
         $lists = TaskLists::query()
-        ->select(['nTaskListNo', 'cTaskListName', 'cTaskListsColor', 'created_at'])
-        ->withCount('tasks')
-        ->latest()
-        ->get();
+            ->select(['nTaskListNo', 'cTaskListName', 'cTaskListsColor', 'created_at'])
+            ->withCount('tasks')
+            ->latest()
+            ->get();
 
         return Inertia::render('lists/Lists', [
             'lists' => $lists
-        ]); 
+        ]);
+    }
+
+
+    public function show(TaskLists $list): Response
+    {
+        $list->load('tasks');
+
+        return Inertia::render('lists/Show', [
+            'list' => $list
+        ]);
     }
 
 
@@ -50,7 +60,8 @@ class ListController extends Controller
     }
 
 
-    public function update(Request $request, TaskLists $list): RedirectResponse {
+    public function update(Request $request, TaskLists $list): RedirectResponse
+    {
         $validated = $request->validate([
             'cTaskListName' => ['required', 'string', 'max:255'],
             'cTaskListsColor' => ['required', 'string', 'max:64'], // Assuming color is a hex code
@@ -62,7 +73,8 @@ class ListController extends Controller
     }
 
 
-    public function destroy(TaskLists $list): RedirectResponse {
+    public function destroy(TaskLists $list): RedirectResponse
+    {
         $list->delete();
 
         return redirect()->route('lists.Lists');

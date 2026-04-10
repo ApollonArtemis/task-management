@@ -186,7 +186,7 @@ const deleteList = (listId: number) => {
                 <CardContent>
                     <p class="text-sm text-muted-foreground mb-4">{{ list.tasks_count || 0  }} {{ list.tasks_count === 1 ? 'task' : 'tasks' }}</p>
                     <div class="flex gap-2">
-                        <Link :href="`/tasks?list_id=${list.nTaskListNo}`" class="flex-1">
+                        <Link :href="`/tasks?nTaskListNo=${list.nTaskListNo}`" class="flex-1">
                             <Button variant="outline" size="sm" class="w-full">
                                 View Tasks
                                 <ExternalLink class="h-4 w-4 ml-2" />

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, Link, router, useForm } from '@inertiajs/vue3';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -82,6 +81,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 const search = ref(props.filters.search || '');
 const cTaskPriority = ref(props.filters.cTaskPriority || '');
 const listId = ref(props.filters.nTaskListNo || '');
+
 
 
 //Dialog state
@@ -179,7 +179,7 @@ const openEditDialog = (task: Tasks) => {
     editForm.cTasksDescription = task.cTasksDescription;
     editForm.cTaskPriority = task.cTaskPriority;
     editForm.cCompleted = task.cCompleted;     
-    editForm.nTaskListNo = task.nTaskListNo;
+    nTaskListNo: null as number | null
     isEditDialogOpen.value = true;
 };
 
