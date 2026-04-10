@@ -11,6 +11,17 @@ import { dashboard } from '@/routes';
 import { Plus, Pencil, Trash2, ExternalLink, Loader2 } from 'lucide-vue-next';
 import { ref } from 'vue';
 
+defineOptions({
+    layout: {
+        breadcrumbs: [
+            {
+                title: 'Lists',
+                href: dashboard(),
+            },
+        ],
+    },
+});
+
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: dashboard().url },
@@ -92,7 +103,6 @@ const deleteList = (listId: number) => {
 
 <template>
     <Head title="Lists" />
-    <AppLayout :breadcrumbs="breadcrumbs">
         <div class="p-6 space-y-6">
             <div class="flex items-center justify-between">
                 <h1 class="text-3xl font-bold">Lists</h1>
@@ -205,5 +215,4 @@ const deleteList = (listId: number) => {
         </Card>
 
         </div>
-    </AppLayout>
 </template>

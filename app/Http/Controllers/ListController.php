@@ -18,7 +18,7 @@ class ListController extends Controller
         ->latest()
         ->get();
 
-        return Inertia::render('lists/index', [
+        return Inertia::render('lists/Lists', [
             'lists' => $lists
         ]); 
     }
@@ -34,7 +34,7 @@ class ListController extends Controller
         $list = TaskLists::create($validated);
 
         // return redirect()->route('lists.index')->with('success', 'Task list created successfully.');
-        return redirect()->route('lists.index');
+        return redirect()->route('lists.Lists');
 
         // $request->validate([
         //     'nTaskListName' => 'required|string|max:255',
@@ -58,13 +58,13 @@ class ListController extends Controller
 
         $list->update($validated);
 
-        return redirect()->route('lists.index');
+        return redirect()->route('lists.Lists');
     }
 
 
     public function destroy(TaskLists $list): RedirectResponse {
         $list->delete();
 
-        return redirect()->route('lists.index');
+        return redirect()->route('lists.Lists');
     }
 }

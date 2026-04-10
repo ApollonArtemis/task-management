@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// import AppLayout from '@/layouts/AppLayout.vue';
+import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, Link, router, useForm } from '@inertiajs/vue3';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,6 +14,17 @@ import { dashboard } from '@/routes';
 import { Trash2, CheckCircle2, Circle, Search, X, Plus, Pencil, Loader2 } from 'lucide-vue-next';
 import { ref } from 'vue';
 import { watchDebounced } from '@vueuse/core';
+
+defineOptions({
+    layout: {
+        breadcrumbs: [
+            {
+                title: 'Tasks',
+                href: dashboard(),
+            },
+        ],
+    },
+});
 
 interface Tasks {
     nTaskNo: number;
@@ -66,10 +77,12 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Tasks', href: '/tasks' }
 ];
 
+
 //Filter State
 const search = ref(props.filters.search || '');
 const cTaskPriority = ref(props.filters.cTaskPriority || '');
 const listId = ref(props.filters.nTaskListNo || '');
+
 
 //Dialog state
 const isCreateDialogOpen = ref(false);
@@ -166,7 +179,7 @@ const openEditDialog = (task: Tasks) => {
     editForm.cTasksDescription = task.cTasksDescription;
     editForm.cTaskPriority = task.cTaskPriority;
     editForm.cCompleted = task.cCompleted;     
-    nTaskListNo: null as number | null  
+    editForm.nTaskListNo = task.nTaskListNo;
     isEditDialogOpen.value = true;
 };
 
@@ -188,7 +201,6 @@ const getPriorityVariant = (cTaskPriority: string): 'default' | 'secondary' | 'd
 
 <template>
     <Head title="Tasks" />
-    <AppLayout :breadcrumbs="breadcrumbs">
         <div class="p-6 space-y-6">
             <div class="flex items-center justify-between">
                 <div>
@@ -445,7 +457,4 @@ const getPriorityVariant = (cTaskPriority: string): 'default' | 'secondary' | 'd
                 </CardContent>
             </Card>
         </div>
-
-        </AppLayout>
-
 </template>

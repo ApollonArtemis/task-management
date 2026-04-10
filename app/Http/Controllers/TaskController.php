@@ -12,22 +12,6 @@ use Inertia\Response;
 class TaskController extends Controller
 {
     //
-
-    // public function index(TaskLists $list): Response
-    // {
-    //     $tasks = Tasks::query()
-    //     ->where('nTaskListNo', $list->nTaskListNo)
-    //     ->select(['nTaskNo', 'cTaskName', 'cTaskDescription', 'dTaskDueDate', 'bTaskCompleted', 'created_at'])
-    //     ->latest()
-    //     ->get();
-
-    //     return Inertia::render('tasks/index', [
-    //         'list' => $list,
-    //         'tasks' => $tasks
-    //     ]); 
-    // }
-
-
     public function index(Request $request): Response
     {
         $query = Tasks::query()->with('list:nTaskListNo,cTaskListName,cTaskListsColor');
@@ -35,7 +19,7 @@ class TaskController extends Controller
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
                 $q->where('cTaskName', 'like', '%' . $request->search . '%')
-                    ->orWhere('cTaskDescription', 'like', '%' . $request->search . '%');
+                    ->orWhere('cTasksDescription', 'like', '%' . $request->search . '%');
             });
         }
 
@@ -51,7 +35,7 @@ class TaskController extends Controller
 
         $lists = TaskLists::select(['nTaskListNo', 'cTaskListName', 'cTaskListsColor'])->get();
 
-        return Inertia::render('tasks/index', [
+        return Inertia::render('tasks/Tasks', [
             'tasks' => $tasks,
             'lists' => $lists,
             'filters' => $request->only(['search', 'cTaskPriority', 'nTaskListNo']),
@@ -63,10 +47,9 @@ class TaskController extends Controller
     {
         $validated = $request->validate([
             'cTaskName' => ['required', 'string', 'max:255'],
-            'cTaskDescription' => ['nullable', 'string'],
+            'cTasksDescription' => ['nullable', 'string'],
             'cTaskPriority' => ['required', 'string', 'max:64'],
-            'nTaskListNo' => ['required', 'exists:TASK_LISTS,nTaskListNo'],
-            // remove cCompleted from here entirely
+            'nTaskListNo' => ['required', 'exists:TASK_LISTS,nTaskListNo']
         ]);
 
         $validated['cCompleted'] = false; // new tasks are always incomplete
@@ -80,8 +63,8 @@ class TaskController extends Controller
     {
         $validated = $request->validate([
             'cTaskName' => ['required', 'string', 'max:255'],
-            'cTaskDescription' => ['nullable', 'string'],
-            'cTaskPriority' => ['required', 'string', 'max:64'],  // Assuming priority is a string like 'High', 'Medium', 'Low'
+            'cTasksDescription' => ['nullable', 'string', 'max: 255'],
+            'cTaskPriority' => ['required', 'string', 'max:64'], 
             'cCompleted' => ['required', 'boolean'],
             'nTaskListNo' => ['required', 'exists:TASK_LISTS,nTaskListNo'],
         ]);
